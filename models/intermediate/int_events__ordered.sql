@@ -28,6 +28,12 @@ ordered as (
         order_value,
         form_id,
         newsletter_id,
+        first_name,
+        last_name,
+        email,
+        phone,
+        shipping_state,
+        shipping_postal_code,
         row_number() over (
             partition by session_id
             order by event_timestamp, event_id
@@ -80,6 +86,12 @@ final as (
         order_value,
         form_id,
         newsletter_id,
+        first_name,
+        last_name,
+        email,
+        phone,
+        shipping_state,
+        shipping_postal_code,
         session_event_number,
         visitor_event_number,
         previous_page_name,

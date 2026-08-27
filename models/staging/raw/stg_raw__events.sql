@@ -45,7 +45,14 @@ renamed as (
                 then (properties ->> 'order_value')::numeric
         end as order_value,
         nullif(properties ->> 'form_id', '') as form_id,
-        nullif(properties ->> 'newsletter_id', '') as newsletter_id
+        nullif(properties ->> 'newsletter_id', '') as newsletter_id,
+        nullif(properties ->> 'first_name', '') as first_name,
+        nullif(properties ->> 'last_name', '') as last_name,
+        nullif(properties ->> 'email', '') as email,
+        nullif(properties ->> 'phone', '') as phone,
+        nullif(properties ->> 'shipping_state', '') as shipping_state,
+        nullif(properties ->> 'shipping_postal_code', '')
+            as shipping_postal_code
     from source_events
 
 )

@@ -63,6 +63,18 @@ models:
         description: Submitted form identifier extracted from event properties when present.
       - name: newsletter_id
         description: Newsletter identifier extracted from event properties when present.
+      - name: first_name
+        description: Visitor first name extracted from event properties when present on lifecycle identity events.
+      - name: last_name
+        description: Visitor last name extracted from event properties when present on lifecycle identity events.
+      - name: email
+        description: Visitor email extracted from event properties when present on signup, newsletter signup, or purchase lifecycle events.
+      - name: phone
+        description: Visitor phone number extracted from event properties when present on purchase lifecycle events.
+      - name: shipping_state
+        description: Shipping state extracted from event properties when present on purchase lifecycle events. Descriptive geography only.
+      - name: shipping_postal_code
+        description: Shipping postal code extracted from event properties when present on purchase lifecycle events. Descriptive geography only.
 
   - name: fct_sessions
     description: Fact table with one row per source-provided visitor session.
@@ -125,3 +137,19 @@ models:
         description: Total purchase order value for the visitor.
         data_tests:
           - not_null
+      - name: first_name
+        description: Latest known visitor first name reconstructed from event history, left null when never observed.
+      - name: last_name
+        description: Latest known visitor last name reconstructed from event history, left null when never observed.
+      - name: email
+        description: Latest known visitor email reconstructed from event history, left null when never observed.
+      - name: phone
+        description: Latest known visitor phone number reconstructed from event history, left null when never observed.
+      - name: shipping_state
+        description: Latest known shipping state reconstructed from purchase event history, left null when never observed. Descriptive geography only.
+      - name: shipping_postal_code
+        description: Latest known shipping postal code reconstructed from purchase event history, left null when never observed. Descriptive geography only.
+      - name: profile_first_observed_at
+        description: First event timestamp where any lifecycle profile field was present for the visitor.
+      - name: profile_last_observed_at
+        description: Most recent event timestamp where any lifecycle profile field was present for the visitor.
