@@ -1,0 +1,32 @@
+version: 2
+
+sources:
+  - name: raw
+    database: synthetic_website_data
+    schema: raw
+    description: Raw synthetic website event data loaded by synthetic-website-data.
+    tables:
+      - name: events
+        description: Raw website page-view events. Grain is one row per generated website event.
+        columns:
+          - name: event_id
+            description: Primary key for the raw website event.
+            data_tests:
+              - not_null
+              - unique
+          - name: visitor_id
+            description: Identifier for the generated visitor associated with the event.
+            data_tests:
+              - not_null
+          - name: session_id
+            description: Identifier for the generated visitor session associated with the event.
+            data_tests:
+              - not_null
+          - name: page
+            description: Website page visited by the event.
+            data_tests:
+              - not_null
+          - name: timestamp
+            description: Timezone-aware timestamp for the event.
+            data_tests:
+              - not_null

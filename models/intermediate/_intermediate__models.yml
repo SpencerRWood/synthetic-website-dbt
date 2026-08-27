@@ -1,0 +1,41 @@
+version: 2
+
+models:
+  - name: int_events__ordered
+    description: Event-level derivation that adds visitor and session ordering context to staged events.
+    columns:
+      - name: event_id
+        description: Primary key for the website event.
+        data_tests:
+          - not_null
+          - unique
+      - name: session_event_number
+        description: Event sequence within the source-provided session identifier.
+        data_tests:
+          - not_null
+      - name: visitor_event_number
+        description: Event sequence within the source-provided visitor identifier.
+        data_tests:
+          - not_null
+
+  - name: int_sessions__derived
+    description: Session-level attributes derived from event data using the source-provided session_id.
+    columns:
+      - name: session_id
+        description: Primary key for a generated website session.
+        data_tests:
+          - not_null
+          - unique
+      - name: visitor_id
+        description: Visitor associated with the session.
+        data_tests:
+          - not_null
+
+  - name: int_visitors__derived
+    description: Visitor-level attributes derived from source-provided visitor identifiers and session summaries.
+    columns:
+      - name: visitor_id
+        description: Primary key for a generated website visitor.
+        data_tests:
+          - not_null
+          - unique

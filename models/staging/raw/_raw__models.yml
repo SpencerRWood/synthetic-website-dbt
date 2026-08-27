@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: stg_raw__events
+    description: Staged raw website events, kept at the source event grain with source-shaped cleanup only.
+    columns:
+      - name: event_id
+        description: Primary key for the website event.
+        data_tests:
+          - not_null
+          - unique
+      - name: visitor_id
+        description: Identifier for the generated visitor associated with the event.
+        data_tests:
+          - not_null
+      - name: session_id
+        description: Identifier for the generated visitor session associated with the event.
+        data_tests:
+          - not_null
+      - name: page_name
+        description: Website page visited by the event.
+        data_tests:
+          - not_null
+      - name: event_timestamp
+        description: Timezone-aware timestamp for the event.
+        data_tests:
+          - not_null

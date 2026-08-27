@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: fct_events
+    description: Fact table with one row per website event.
+    columns:
+      - name: event_id
+        description: Primary key for the website event. Mart grain is one row per website event.
+        data_tests:
+          - not_null
+          - unique
+      - name: visitor_id
+        description: Visitor associated with the event.
+        data_tests:
+          - not_null
+      - name: session_id
+        description: Session associated with the event.
+        data_tests:
+          - not_null
+      - name: event_timestamp
+        description: Timezone-aware timestamp for the event.
+        data_tests:
+          - not_null
+
+  - name: fct_sessions
+    description: Fact table with one row per source-provided visitor session.
+    columns:
+      - name: session_id
+        description: Primary key for the website session. Mart grain is one row per visitor session.
+        data_tests:
+          - not_null
+          - unique
+      - name: visitor_id
+        description: Visitor associated with the session.
+        data_tests:
+          - not_null
+
+  - name: dim_visitors
+    description: Dimension table with one row per generated website visitor.
+    columns:
+      - name: visitor_id
+        description: Primary key for the generated visitor. Mart grain is one row per visitor.
+        data_tests:
+          - not_null
+          - unique
