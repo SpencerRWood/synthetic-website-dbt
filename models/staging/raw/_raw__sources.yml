@@ -7,7 +7,7 @@ sources:
     description: Raw synthetic website event data loaded by synthetic-website-data.
     tables:
       - name: events
-        description: Raw website page-view events. Grain is one row per generated website event.
+        description: Raw website events. Grain is one row per generated website event.
         columns:
           - name: event_id
             description: Primary key for the raw website event.
@@ -30,3 +30,21 @@ sources:
             description: Timezone-aware timestamp for the event.
             data_tests:
               - not_null
+          - name: event_type
+            description: Type of website event captured by the generator.
+            data_tests:
+              - not_null
+              - accepted_values:
+                  arguments:
+                    values:
+                      - page_view
+                      - click
+                      - product_view
+                      - search
+                      - add_to_cart
+                      - begin_checkout
+                      - purchase
+                      - form_submit
+                      - newsletter_signup
+          - name: properties
+            description: Event-specific properties captured as raw JSONB.

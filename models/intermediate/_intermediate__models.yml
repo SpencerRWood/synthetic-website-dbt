@@ -9,6 +9,22 @@ models:
         data_tests:
           - not_null
           - unique
+      - name: event_type
+        description: Type of website event captured by the generator.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - page_view
+                  - click
+                  - product_view
+                  - search
+                  - add_to_cart
+                  - begin_checkout
+                  - purchase
+                  - form_submit
+                  - newsletter_signup
       - name: session_event_number
         description: Event sequence within the source-provided session identifier.
         data_tests:
@@ -30,6 +46,26 @@ models:
         description: Visitor associated with the session.
         data_tests:
           - not_null
+      - name: event_count
+        description: Count of events in the session.
+        data_tests:
+          - not_null
+      - name: page_view_count
+        description: Count of page view events in the session.
+        data_tests:
+          - not_null
+      - name: purchase_count
+        description: Count of purchase events in the session.
+        data_tests:
+          - not_null
+      - name: order_count
+        description: Count of distinct purchase order identifiers in the session.
+        data_tests:
+          - not_null
+      - name: total_order_value
+        description: Total purchase order value in the session.
+        data_tests:
+          - not_null
 
   - name: int_visitors__derived
     description: Visitor-level attributes derived from source-provided visitor identifiers and session summaries.
@@ -39,3 +75,23 @@ models:
         data_tests:
           - not_null
           - unique
+      - name: session_count
+        description: Count of sessions for the visitor.
+        data_tests:
+          - not_null
+      - name: event_count
+        description: Count of events for the visitor.
+        data_tests:
+          - not_null
+      - name: purchase_count
+        description: Count of purchase events for the visitor.
+        data_tests:
+          - not_null
+      - name: order_count
+        description: Count of distinct purchase order identifiers for the visitor.
+        data_tests:
+          - not_null
+      - name: total_order_value
+        description: Total purchase order value for the visitor.
+        data_tests:
+          - not_null
