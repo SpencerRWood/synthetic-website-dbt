@@ -71,3 +71,114 @@ models:
         description: Submitted form identifier extracted from event properties when present.
       - name: newsletter_id
         description: Newsletter identifier extracted from event properties when present.
+      - name: first_name
+        description: Visitor first name extracted from event properties when present on lifecycle identity events.
+      - name: last_name
+        description: Visitor last name extracted from event properties when present on lifecycle identity events.
+      - name: email
+        description: Visitor email extracted from event properties when present on signup, newsletter signup, or purchase lifecycle events.
+      - name: phone
+        description: Visitor phone number extracted from event properties when present on purchase lifecycle events.
+      - name: shipping_state
+        description: Shipping state extracted from event properties when present on purchase lifecycle events. This is descriptive geography and does not drive behavior, attribution, or demographic inference.
+      - name: shipping_postal_code
+        description: Shipping postal code extracted from event properties when present on purchase lifecycle events. This is descriptive geography and does not drive behavior, attribution, or demographic inference.
+
+unit_tests:
+  - name: stg_raw__events_extracts_profile_properties
+    model: stg_raw__events
+    given:
+      - input: source('raw', 'events')
+        format: sql
+        rows: |
+          select
+              'event_profile' as event_id,
+              'visitor_profile' as visitor_id,
+              'session_profile' as session_id,
+              'newsletter' as page,
+              '2026-01-01 10:00:00+00'::timestamptz as timestamp,
+              'newsletter_signup' as event_type,
+              '{
+                  "first_name": "Ada",
+                  "last_name": "Lovelace",
+                  "email": "ada@example.com",
+                  "phone": "",
+                  "shipping_state": "",
+                  "shipping_postal_code": ""
+              }'::jsonb as properties
+          union all
+          select
+              'event_anonymous' as event_id,
+              'visitor_anonymous' as visitor_id,
+              'session_anonymous' as session_id,
+              'home' as page,
+              '2026-01-01 10:01:00+00'::timestamptz as timestamp,
+              'page_view' as event_type,
+              '{"product_id": "sku-001"}'::jsonb as properties
+    expect:
+      format: sql
+      rows: |
+        select
+            'event_profile' as event_id,
+            'visitor_profile' as visitor_id,
+            'session_profile' as session_id,
+            'newsletter' as page,
+            'newsletter' as page_name,
+            '2026-01-01 10:00:00+00'::timestamptz as timestamp,
+            '2026-01-01 10:00:00+00'::timestamptz as event_timestamp,
+            'newsletter_signup' as event_type,
+            '{
+                "first_name": "Ada",
+                "last_name": "Lovelace",
+                "email": "ada@example.com",
+                "phone": "",
+                "shipping_state": "",
+                "shipping_postal_code": ""
+            }'::jsonb as properties,
+            null as product_id,
+            null as category,
+            null::numeric as price,
+            null::integer as quantity,
+            null::numeric as cart_value,
+            null as search_query,
+            null::integer as results_count,
+            null::integer as items_count,
+            null as order_id,
+            null::numeric as order_value,
+            null as form_id,
+            null as newsletter_id,
+            'Ada' as first_name,
+            'Lovelace' as last_name,
+            'ada@example.com' as email,
+            null as phone,
+            null as shipping_state,
+            null as shipping_postal_code
+        union all
+        select
+            'event_anonymous' as event_id,
+            'visitor_anonymous' as visitor_id,
+            'session_anonymous' as session_id,
+            'home' as page,
+            'home' as page_name,
+            '2026-01-01 10:01:00+00'::timestamptz as timestamp,
+            '2026-01-01 10:01:00+00'::timestamptz as event_timestamp,
+            'page_view' as event_type,
+            '{"product_id": "sku-001"}'::jsonb as properties,
+            'sku-001' as product_id,
+            null as category,
+            null::numeric as price,
+            null::integer as quantity,
+            null::numeric as cart_value,
+            null as search_query,
+            null::integer as results_count,
+            null::integer as items_count,
+            null as order_id,
+            null::numeric as order_value,
+            null as form_id,
+            null as newsletter_id,
+            null as first_name,
+            null as last_name,
+            null as email,
+            null as phone,
+            null as shipping_state,
+            null as shipping_postal_code

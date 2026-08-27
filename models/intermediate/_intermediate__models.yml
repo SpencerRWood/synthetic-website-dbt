@@ -33,6 +33,18 @@ models:
         description: Event sequence within the source-provided visitor identifier.
         data_tests:
           - not_null
+      - name: first_name
+        description: Visitor first name extracted from event properties when present on lifecycle identity events.
+      - name: last_name
+        description: Visitor last name extracted from event properties when present on lifecycle identity events.
+      - name: email
+        description: Visitor email extracted from event properties when present on signup, newsletter signup, or purchase lifecycle events.
+      - name: phone
+        description: Visitor phone number extracted from event properties when present on purchase lifecycle events.
+      - name: shipping_state
+        description: Shipping state extracted from event properties when present on purchase lifecycle events. This is descriptive geography and is not used for behavior, attribution, or demographic inference.
+      - name: shipping_postal_code
+        description: Shipping postal code extracted from event properties when present on purchase lifecycle events. This is descriptive geography and is not used for behavior, attribution, or demographic inference.
 
   - name: int_sessions__derived
     description: Session-level attributes derived from event data using the source-provided session_id.
@@ -95,3 +107,125 @@ models:
         description: Total purchase order value for the visitor.
         data_tests:
           - not_null
+
+  - name: int_visitor_profiles__latest
+    description: Latest known nullable visitor profile state reconstructed from raw event history at one row per visitor. Signup and newsletter signup may introduce identity fields, purchase may add identity, contact, and shipping fields, and later non-null event values become the current profile state.
+    columns:
+      - name: visitor_id
+        description: Primary key for the generated visitor profile state.
+        data_tests:
+          - not_null
+          - unique
+      - name: first_name
+        description: Latest known visitor first name from event properties, left null when never observed.
+      - name: last_name
+        description: Latest known visitor last name from event properties, left null when never observed.
+      - name: email
+        description: Latest known visitor email from event properties, left null when never observed.
+      - name: phone
+        description: Latest known visitor phone number from event properties, left null when never observed.
+      - name: shipping_state
+        description: Latest known shipping state from purchase event properties, left null when never observed. Descriptive geography only.
+      - name: shipping_postal_code
+        description: Latest known shipping postal code from purchase event properties, left null when never observed. Descriptive geography only.
+      - name: profile_first_observed_at
+        description: First event timestamp where any lifecycle profile field was present for the visitor.
+      - name: profile_last_observed_at
+        description: Most recent event timestamp where any lifecycle profile field was present for the visitor.
+
+unit_tests:
+  - name: int_visitor_profiles__latest_reconstructs_lifecycle_state
+    model: int_visitor_profiles__latest
+    given:
+      - input: ref('int_events__ordered')
+        rows:
+          - {
+              event_id: 00000000-0000-0000-0000-000000000101,
+              visitor_id: 00000000-0000-0000-0000-000000000001,
+              event_timestamp: "2026-01-01 10:00:00+00",
+              first_name: Ada,
+              last_name: Lovelace,
+              email: ada@example.com,
+            }
+          - {
+              event_id: 00000000-0000-0000-0000-000000000102,
+              visitor_id: 00000000-0000-0000-0000-000000000001,
+              event_timestamp: "2026-01-01 10:05:00+00",
+              phone: "555-0100",
+              shipping_state: CA,
+              shipping_postal_code: "94105",
+            }
+          - {
+              event_id: 00000000-0000-0000-0000-000000000201,
+              visitor_id: 00000000-0000-0000-0000-000000000002,
+              event_timestamp: "2026-01-01 11:00:00+00",
+              first_name: Grace,
+              last_name: Hopper,
+              email: grace@example.com,
+              phone: "555-0110",
+              shipping_state: NY,
+              shipping_postal_code: "10001",
+            }
+          - {
+              event_id: 00000000-0000-0000-0000-000000000301,
+              visitor_id: 00000000-0000-0000-0000-000000000003,
+              event_timestamp: "2026-01-01 12:00:00+00",
+            }
+          - {
+              event_id: 00000000-0000-0000-0000-000000000401,
+              visitor_id: 00000000-0000-0000-0000-000000000004,
+              event_timestamp: "2026-01-01 13:00:00+00",
+              email: old@example.com,
+            }
+          - {
+              event_id: 00000000-0000-0000-0000-000000000402,
+              visitor_id: 00000000-0000-0000-0000-000000000004,
+              event_timestamp: "2026-01-01 13:00:00+00",
+              email: new@example.com,
+            }
+    expect:
+      rows:
+        - {
+            visitor_id: 00000000-0000-0000-0000-000000000001,
+            first_name: Ada,
+            last_name: Lovelace,
+            email: ada@example.com,
+            phone: "555-0100",
+            shipping_state: CA,
+            shipping_postal_code: "94105",
+            profile_first_observed_at: "2026-01-01 10:00:00+00",
+            profile_last_observed_at: "2026-01-01 10:05:00+00",
+          }
+        - {
+            visitor_id: 00000000-0000-0000-0000-000000000002,
+            first_name: Grace,
+            last_name: Hopper,
+            email: grace@example.com,
+            phone: "555-0110",
+            shipping_state: NY,
+            shipping_postal_code: "10001",
+            profile_first_observed_at: "2026-01-01 11:00:00+00",
+            profile_last_observed_at: "2026-01-01 11:00:00+00",
+          }
+        - {
+            visitor_id: 00000000-0000-0000-0000-000000000003,
+            first_name: null,
+            last_name: null,
+            email: null,
+            phone: null,
+            shipping_state: null,
+            shipping_postal_code: null,
+            profile_first_observed_at: null,
+            profile_last_observed_at: null,
+          }
+        - {
+            visitor_id: 00000000-0000-0000-0000-000000000004,
+            first_name: null,
+            last_name: null,
+            email: new@example.com,
+            phone: null,
+            shipping_state: null,
+            shipping_postal_code: null,
+            profile_first_observed_at: "2026-01-01 13:00:00+00",
+            profile_last_observed_at: "2026-01-01 13:00:00+00",
+          }
