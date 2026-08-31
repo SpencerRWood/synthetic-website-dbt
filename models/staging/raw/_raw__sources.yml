@@ -4,10 +4,10 @@ sources:
   - name: raw
     database: synthetic_website_data
     schema: raw
-    description: Raw synthetic website event data loaded by synthetic-website-data.
+    description: Raw synthetic website event and campaign data loaded by synthetic-website-data.
     tables:
       - name: events
-        description: Raw website events. Grain is one row per generated website event.
+        description: Raw website events. Grain is one row per generated website event. Campaign fields in properties are synthetic acquisition provenance used to attribute generated campaign-driven traffic.
         columns:
           - name: event_id
             description: Primary key for the raw website event.
@@ -47,4 +47,29 @@ sources:
                       - form_submit
                       - newsletter_signup
           - name: properties
-            description: Event-specific properties captured as raw JSONB.
+            description: Event-specific properties captured as raw JSONB, including synthetic acquisition provenance such as utm_source, utm_medium, utm_campaign, campaign_id, and channel when campaign-driven events are generated.
+      - name: campaigns
+        description: Raw generated campaign inputs at one row per date_day and campaign_id, including known campaign configuration such as spend, channel, and UTM values. The actual_* fields are generator-known synthetic truth/debug values and are not production-realistic analytics fields.
+        columns:
+          - name: date_day
+            description: Campaign calendar date for the generated daily campaign input.
+            data_tests:
+              - not_null
+          - name: campaign_id
+            description: Identifier for the generated campaign.
+            data_tests:
+              - not_null
+          - name: channel
+            description: Generated acquisition channel for the campaign.
+          - name: utm_source
+            description: Generated UTM source value for campaign-driven traffic.
+          - name: utm_medium
+            description: Generated UTM medium value for campaign-driven traffic.
+          - name: utm_campaign
+            description: Generated UTM campaign value for campaign-driven traffic.
+          - name: daily_spend
+            description: Generated daily spend input for the campaign.
+          - name: actual_adstock
+            description: Synthetic-only diagnostic truth field for generated adstock. Real campaign warehouses would infer this and marts must not expose it.
+          - name: actual_saturated_demand
+            description: Synthetic-only diagnostic truth field for generated saturated demand, constrained from 0 to 1. Real campaign warehouses would infer this and marts must not expose it.

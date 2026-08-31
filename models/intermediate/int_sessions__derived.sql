@@ -42,7 +42,28 @@ sessions as (
             as entry_page_name,
         (array_agg(page_name order by event_timestamp desc, event_id desc))[1]
             as exit_page_name,
-        bool_or(page_name = 'order_confirmation') as reached_order_confirmation
+        bool_or(page_name = 'order_confirmation') as reached_order_confirmation,
+        (
+            array_agg(campaign_id order by event_timestamp, event_id)
+            filter (where campaign_id is not null)
+        )[1] as campaign_id,
+        (
+            array_agg(channel order by event_timestamp, event_id)
+            filter (where channel is not null)
+        )[1] as channel,
+        (
+            array_agg(utm_source order by event_timestamp, event_id)
+            filter (where utm_source is not null)
+        )[1] as utm_source,
+        (
+            array_agg(utm_medium order by event_timestamp, event_id)
+            filter (where utm_medium is not null)
+        )[1] as utm_medium,
+        (
+            array_agg(utm_campaign order by event_timestamp, event_id)
+            filter (where utm_campaign is not null)
+        )[1] as utm_campaign,
+        bool_or(is_campaign_driven) as is_campaign_driven
     from ordered_events
     group by 1, 2
 
@@ -73,6 +94,12 @@ final as (
         entry_page_name,
         exit_page_name,
         reached_order_confirmation,
+        campaign_id,
+        channel,
+        utm_source,
+        utm_medium,
+        utm_campaign,
+        is_campaign_driven,
         extract(epoch from session_ended_at - session_started_at)
             as session_duration_seconds
     from sessions
