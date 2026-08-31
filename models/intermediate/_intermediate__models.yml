@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: int_events__ordered
-    description: Event-level derivation that adds visitor and session ordering context to staged events.
+    description: Event-level derivation that adds visitor and session ordering context to staged events, including synthetic campaign provenance parsed from raw event properties.
     columns:
       - name: event_id
         description: Primary key for the website event.
@@ -45,9 +45,21 @@ models:
         description: Shipping state extracted from event properties when present on purchase lifecycle events. This is descriptive geography and is not used for behavior, attribution, or demographic inference.
       - name: shipping_postal_code
         description: Shipping postal code extracted from event properties when present on purchase lifecycle events. This is descriptive geography and is not used for behavior, attribution, or demographic inference.
+      - name: utm_source
+        description: Synthetic campaign UTM source from event properties when present.
+      - name: utm_medium
+        description: Synthetic campaign UTM medium from event properties when present.
+      - name: utm_campaign
+        description: Synthetic campaign UTM campaign from event properties when present.
+      - name: campaign_id
+        description: Synthetic campaign identifier from event properties when present.
+      - name: channel
+        description: Synthetic acquisition channel from event properties when present.
+      - name: is_campaign_driven
+        description: True when event properties include campaign_id or utm_campaign.
 
   - name: int_sessions__derived
-    description: Session-level attributes derived from event data using the source-provided session_id.
+    description: Session-level attributes derived from event data using the source-provided session_id. Campaign fields are rolled up from events using the first non-null value within each session.
     columns:
       - name: session_id
         description: Primary key for a generated website session.
@@ -78,6 +90,43 @@ models:
         description: Total purchase order value in the session.
         data_tests:
           - not_null
+      - name: campaign_id
+        description: First non-null synthetic campaign identifier observed in the session.
+      - name: channel
+        description: First non-null synthetic acquisition channel observed in the session.
+      - name: utm_source
+        description: First non-null synthetic UTM source observed in the session.
+      - name: utm_medium
+        description: First non-null synthetic UTM medium observed in the session.
+      - name: utm_campaign
+        description: First non-null synthetic UTM campaign observed in the session.
+      - name: is_campaign_driven
+        description: True when any event in the session includes campaign_id or utm_campaign.
+
+  - name: int_campaign_sessions__derived
+    description: Campaign-attributed sessions with generated daily campaign config joined by session date and campaign_id. This model keeps production-realistic campaign inputs and does not expose synthetic actual_* truth fields.
+    columns:
+      - name: session_id
+        description: Primary key for a generated website session.
+        data_tests:
+          - not_null
+          - unique
+      - name: date_day
+        description: Calendar date derived from session_started_at.
+      - name: campaign_id
+        description: First non-null synthetic campaign identifier observed in the session.
+      - name: channel
+        description: Session campaign channel, enriched from daily campaign config when available.
+      - name: utm_source
+        description: Session campaign UTM source, enriched from daily campaign config when available.
+      - name: utm_medium
+        description: Session campaign UTM medium, enriched from daily campaign config when available.
+      - name: utm_campaign
+        description: Session campaign UTM campaign, enriched from daily campaign config when available.
+      - name: is_campaign_driven
+        description: True when any event in the session includes campaign_id or utm_campaign.
+      - name: daily_spend
+        description: Generated daily campaign spend joined from staging when session campaign/date has a matching campaign row.
 
   - name: int_visitors__derived
     description: Visitor-level attributes derived from source-provided visitor identifiers and session summaries.

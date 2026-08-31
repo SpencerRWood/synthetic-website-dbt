@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: stg_raw__events
-    description: Staged raw website events, kept at the source event grain with typed JSON property extraction.
+    description: Staged raw website events, kept at the source event grain with typed JSON property extraction. Campaign fields extracted from raw events properties are synthetic acquisition provenance.
     columns:
       - name: event_id
         description: Primary key for the website event.
@@ -46,7 +46,19 @@ models:
                   - form_submit
                   - newsletter_signup
       - name: properties
-        description: Event-specific properties preserved as raw JSONB.
+        description: Event-specific properties preserved as raw JSONB, including synthetic acquisition provenance when campaign-driven events are generated.
+      - name: utm_source
+        description: Synthetic campaign UTM source extracted from event properties when present.
+      - name: utm_medium
+        description: Synthetic campaign UTM medium extracted from event properties when present.
+      - name: utm_campaign
+        description: Synthetic campaign UTM campaign extracted from event properties when present.
+      - name: campaign_id
+        description: Synthetic campaign identifier extracted from event properties when present.
+      - name: channel
+        description: Synthetic acquisition channel extracted from event properties when present.
+      - name: is_campaign_driven
+        description: True when event properties include campaign_id or utm_campaign.
       - name: product_id
         description: Product identifier extracted from event properties when present.
       - name: category
@@ -83,6 +95,34 @@ models:
         description: Shipping state extracted from event properties when present on purchase lifecycle events. This is descriptive geography and does not drive behavior, attribution, or demographic inference.
       - name: shipping_postal_code
         description: Shipping postal code extracted from event properties when present on purchase lifecycle events. This is descriptive geography and does not drive behavior, attribution, or demographic inference.
+
+  - name: stg_raw__campaigns
+    description: Staged raw generated campaign inputs, preserved at one row per date_day and campaign_id. actual_adstock and actual_saturated_demand are synthetic truth/debug fields for QA only and must not be exposed in marts because real-life warehouses would infer them.
+    columns:
+      - name: date_day
+        description: Campaign calendar date.
+        data_tests:
+          - not_null
+      - name: campaign_id
+        description: Identifier for the generated campaign.
+        data_tests:
+          - not_null
+      - name: channel
+        description: Generated acquisition channel for the campaign.
+      - name: utm_source
+        description: Generated UTM source value for campaign-driven traffic.
+      - name: utm_medium
+        description: Generated UTM medium value for campaign-driven traffic.
+      - name: utm_campaign
+        description: Generated UTM campaign value for campaign-driven traffic.
+      - name: daily_spend
+        description: Generated non-negative daily campaign spend input.
+        data_tests:
+          - not_null
+      - name: actual_adstock
+        description: Synthetic-only non-negative diagnostic truth field for generated adstock. Real campaign warehouses would infer this value; use only in staging, QA, validation, or clearly named diagnostic models.
+      - name: actual_saturated_demand
+        description: Synthetic-only diagnostic truth field for generated saturated demand, expected to be between 0 and 1. Real campaign warehouses would infer this value; use only in staging, QA, validation, or clearly named diagnostic models.
 
 unit_tests:
   - name: stg_raw__events_extracts_profile_properties
@@ -135,6 +175,12 @@ unit_tests:
                 "shipping_state": "",
                 "shipping_postal_code": ""
             }'::jsonb as properties,
+            null as utm_source,
+            null as utm_medium,
+            null as utm_campaign,
+            null as campaign_id,
+            null as channel,
+            false as is_campaign_driven,
             null as product_id,
             null as category,
             null::numeric as price,
@@ -164,6 +210,12 @@ unit_tests:
             '2026-01-01 10:01:00+00'::timestamptz as event_timestamp,
             'page_view' as event_type,
             '{"product_id": "sku-001"}'::jsonb as properties,
+            null as utm_source,
+            null as utm_medium,
+            null as utm_campaign,
+            null as campaign_id,
+            null as channel,
+            false as is_campaign_driven,
             'sku-001' as product_id,
             null as category,
             null::numeric as price,

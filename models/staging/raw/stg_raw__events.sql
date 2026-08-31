@@ -16,6 +16,14 @@ renamed as (
         timestamp as event_timestamp,
         event_type,
         properties,
+        nullif(properties ->> 'utm_source', '') as utm_source,
+        nullif(properties ->> 'utm_medium', '') as utm_medium,
+        nullif(properties ->> 'utm_campaign', '') as utm_campaign,
+        nullif(properties ->> 'campaign_id', '') as campaign_id,
+        nullif(properties ->> 'channel', '') as channel,
+        nullif(properties ->> 'campaign_id', '') is not null
+        or nullif(properties ->> 'utm_campaign', '') is not null
+            as is_campaign_driven,
         nullif(properties ->> 'product_id', '') as product_id,
         nullif(properties ->> 'category', '') as category,
         case

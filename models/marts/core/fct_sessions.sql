@@ -21,5 +21,11 @@ select
     max_cart_value,
     entry_page_name,
     exit_page_name,
-    reached_order_confirmation
+    reached_order_confirmation,
+    campaign_id,
+    channel,
+    utm_source,
+    utm_medium,
+    utm_campaign,
+    is_campaign_driven
 from {{ ref('int_sessions__derived') }}
