@@ -48,15 +48,6 @@ jobs:
       - name: Prepare example dbt profile
         run: cp profiles.example.yml profiles.yml
 
-      - name: Run Ruff lint
-        run: uv run ruff check .
-
-      - name: Run Ruff format check
-        run: uv run ruff format --check .
-
-      - name: Run SQLFluff lint
-        run: uv run sqlfluff lint .
-
       - name: Run dbt deps
         run: uv run dbt deps
 

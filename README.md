@@ -180,13 +180,13 @@ The Jinja templater with dbt builtins keeps SQL linting available without a
 live PostgreSQL connection. `dbt parse` provides dbt-aware project validation
 against `profiles.example.yml`.
 
-## CI
+## Release Validation
 
-CI installs dependencies with `uv`, runs Ruff, SQLFluff, `dbt deps`, optional
-`dbt parse`, and pre-commit.
+The release workflow installs dependencies with `uv`, runs `dbt deps`, optional
+`dbt parse`, and pre-commit before semantic-release. Ruff and SQLFluff are run
+through pre-commit.
 
-Always-on CI uses placeholder dbt environment values for static parsing and
-linting. Database-backed validation should be enabled separately with real CI
+Database-backed validation should be enabled separately with real workflow
 secrets and should not store credentials in source control.
 
 ## Semantic Release
