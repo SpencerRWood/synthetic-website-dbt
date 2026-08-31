@@ -1,6 +1,6 @@
 [project]
 name = "synthetic-website-dbt"
-version = "0.1.0"
+version = "0.2.0"
 description = "dbt transformations and analytics marts for the synthetic website dataset."
 readme = "README.md"
 requires-python = ">=3.14"
