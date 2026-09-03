@@ -4,7 +4,7 @@ sources:
   - name: raw
     database: synthetic_website_data
     schema: raw
-    description: Raw synthetic website event and campaign data loaded by synthetic-website-data.
+    description: Raw website event, campaign, and page-inventory data loaded by upstream systems.
     tables:
       - name: events
         description: Raw website events. Grain is one row per generated website event. Campaign fields in properties are synthetic acquisition provenance used to attribute generated campaign-driven traffic.
@@ -73,3 +73,28 @@ sources:
             description: Synthetic-only diagnostic truth field for generated adstock. Real campaign warehouses would infer this and marts must not expose it.
           - name: actual_saturated_demand
             description: Synthetic-only diagnostic truth field for generated saturated demand, constrained from 0 to 1. Real campaign warehouses would infer this and marts must not expose it.
+      - name: website
+        description: Raw website page inventory and page-link data from a CMS, sitemap, or site-management system. Website traffic flow is calculated separately from raw.events using session-ordered events; transition_probability is retained only in raw and is not propagated into models.
+        columns:
+          - name: page_id
+            description: Identifier for the website page.
+          - name: page_path
+            description: Canonical path for the website page.
+          - name: page_name
+            description: Human-readable website page name.
+          - name: page_type
+            description: Website page classification supplied by the source system.
+          - name: parent_page_id
+            description: Identifier of the website page's parent, when present.
+          - name: is_active
+            description: Whether the page is active in the source system.
+          - name: published_at
+            description: Timestamp when the page was first published.
+          - name: updated_at
+            description: Timestamp when the page was most recently updated.
+          - name: from_page
+            description: Source-managed origin page in a known page-to-page link.
+          - name: to_page
+            description: Source-managed destination page in a known page-to-page link.
+          - name: transition_probability
+            description: Raw-only transition probability. It is not propagated to staging or marts because navigation behavior is not modeled from this source.

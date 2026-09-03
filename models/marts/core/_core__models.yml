@@ -163,6 +163,300 @@ models:
       - name: observed_pageviews
         description: Count of observed page view events from campaign-attributed sessions for the campaign day.
 
+  - name: fct_campaign_overview
+    description: Campaign-level overview with one row per campaign that has positive spend. Start and end dates are based on positive-spend dates; campaign attribution fields are expected to remain constant over those active dates.
+    columns:
+      - name: campaign_id
+        description: Identifier for the generated campaign. Mart grain is one row per campaign.
+        data_tests:
+          - not_null
+          - unique
+      - name: campaign_start_date
+        description: First date with positive campaign spend.
+        data_tests:
+          - not_null
+      - name: campaign_end_date
+        description: Last date with positive campaign spend.
+        data_tests:
+          - not_null
+      - name: total_spend
+        description: Total configured campaign spend across all active dates.
+        data_tests:
+          - not_null
+      - name: channel
+        description: Generated acquisition channel for the campaign.
+      - name: utm_source
+        description: Generated UTM source value for the campaign.
+      - name: utm_medium
+        description: Generated UTM medium value for the campaign.
+
+  - name: fct_website_daily_metrics
+    description: Daily website performance fact with one row per date_day. Metrics are attributed to the calendar day the session started.
+    columns:
+      - name: date_day
+        description: Calendar date for the session-started daily metrics. Mart grain is one row per date_day.
+        data_tests:
+          - not_null
+          - unique
+      - name: session_count
+        description: Count of sessions that started on the date.
+        data_tests:
+          - not_null
+      - name: paid_search_session_count
+        description: Count of sessions attributed to the paid_search channel that started on the date.
+        data_tests:
+          - not_null
+      - name: display_session_count
+        description: Count of sessions attributed to the display channel that started on the date.
+        data_tests:
+          - not_null
+      - name: unattributed_session_count
+        description: Count of sessions without a recorded channel that started on the date.
+        data_tests:
+          - not_null
+      - name: visitor_count
+        description: Count of distinct visitors with a session that started on the date.
+        data_tests:
+          - not_null
+      - name: event_count
+        description: Count of events in sessions that started on the date.
+        data_tests:
+          - not_null
+      - name: page_view_count
+        description: Count of page view events in sessions that started on the date.
+        data_tests:
+          - not_null
+      - name: product_view_count
+        description: Count of product view events in sessions that started on the date.
+        data_tests:
+          - not_null
+      - name: search_count
+        description: Count of search events in sessions that started on the date.
+        data_tests:
+          - not_null
+      - name: add_to_cart_count
+        description: Count of add-to-cart events in sessions that started on the date.
+        data_tests:
+          - not_null
+      - name: begin_checkout_count
+        description: Count of begin-checkout events in sessions that started on the date.
+        data_tests:
+          - not_null
+      - name: purchase_count
+        description: Count of purchase events in sessions that started on the date.
+        data_tests:
+          - not_null
+      - name: newsletter_signup_count
+        description: Count of newsletter-signup events in sessions that started on the date.
+        data_tests:
+          - not_null
+      - name: order_count
+        description: Count of distinct purchase order identifiers in sessions that started on the date.
+        data_tests:
+          - not_null
+      - name: total_order_value
+        description: Total purchase order value in sessions that started on the date.
+        data_tests:
+          - not_null
+      - name: total_items_purchased
+        description: Total purchased item count in sessions that started on the date.
+        data_tests:
+          - not_null
+      - name: product_view_session_count
+        description: Count of sessions that included at least one product view on the date.
+        data_tests:
+          - not_null
+      - name: add_to_cart_session_count
+        description: Count of sessions that included at least one add-to-cart event on the date.
+        data_tests:
+          - not_null
+      - name: begin_checkout_session_count
+        description: Count of sessions that included at least one begin-checkout event on the date.
+        data_tests:
+          - not_null
+      - name: purchase_session_count
+        description: Count of sessions that included at least one purchase event on the date.
+        data_tests:
+          - not_null
+
+  - name: fct_website_daily_channel_metrics
+    description: Daily website performance fact with one row per date_day and channel. Metrics are attributed to the calendar day the session started; sessions without a channel are grouped as unattributed.
+    columns:
+      - name: date_day
+        description: Calendar date for the session-started channel metrics. Mart grain is one row per date_day and channel.
+        data_tests:
+          - not_null
+      - name: channel
+        description: Session acquisition channel, or unattributed when no channel was recorded.
+        data_tests:
+          - not_null
+      - name: session_count
+        description: Count of sessions that started on the date for the channel.
+        data_tests:
+          - not_null
+      - name: visitor_count
+        description: Count of distinct visitors with a session that started on the date for the channel.
+        data_tests:
+          - not_null
+      - name: event_count
+        description: Count of events in sessions that started on the date for the channel.
+        data_tests:
+          - not_null
+      - name: page_view_count
+        description: Count of page view events in sessions that started on the date for the channel.
+        data_tests:
+          - not_null
+      - name: product_view_count
+        description: Count of product view events in sessions that started on the date for the channel.
+        data_tests:
+          - not_null
+      - name: search_count
+        description: Count of search events in sessions that started on the date for the channel.
+        data_tests:
+          - not_null
+      - name: add_to_cart_count
+        description: Count of add-to-cart events in sessions that started on the date for the channel.
+        data_tests:
+          - not_null
+      - name: begin_checkout_count
+        description: Count of begin-checkout events in sessions that started on the date for the channel.
+        data_tests:
+          - not_null
+      - name: purchase_count
+        description: Count of purchase events in sessions that started on the date for the channel.
+        data_tests:
+          - not_null
+      - name: newsletter_signup_count
+        description: Count of newsletter-signup events in sessions that started on the date for the channel.
+        data_tests:
+          - not_null
+      - name: order_count
+        description: Count of distinct purchase order identifiers in sessions that started on the date for the channel.
+        data_tests:
+          - not_null
+      - name: total_order_value
+        description: Total purchase order value in sessions that started on the date for the channel.
+        data_tests:
+          - not_null
+      - name: total_items_purchased
+        description: Total purchased item count in sessions that started on the date for the channel.
+        data_tests:
+          - not_null
+      - name: product_view_session_count
+        description: Count of sessions with at least one product view on the date for the channel.
+        data_tests:
+          - not_null
+      - name: add_to_cart_session_count
+        description: Count of sessions with at least one add-to-cart event on the date for the channel.
+        data_tests:
+          - not_null
+      - name: begin_checkout_session_count
+        description: Count of sessions with at least one begin-checkout event on the date for the channel.
+        data_tests:
+          - not_null
+      - name: purchase_session_count
+        description: Count of sessions with at least one purchase event on the date for the channel.
+        data_tests:
+          - not_null
+
+  - name: dim_website_pages
+    description: Website page dimension with one row per page in the source-managed page-link graph. It derives entry and terminal-page flags from graph topology; website traffic flow is calculated separately from raw.events using session-ordered events.
+    columns:
+      - name: page_id
+        description: Primary key for the website page. Mart grain is one row per website page.
+        data_tests:
+          - not_null
+          - unique
+      - name: page_path
+        description: Canonical non-empty path for the website page.
+        data_tests:
+          - not_null
+      - name: page_name
+        description: Page identifier from the source-managed graph, used as the page name until CMS metadata is available.
+      - name: page_type
+        description: Website page classification, null because the current graph source does not provide page inventory metadata.
+      - name: parent_page_id
+        description: Identifier of the parent website page, null because the current graph source does not provide page hierarchy metadata.
+      - name: is_entry_page
+        description: True when the page has no incoming source-managed page link.
+        data_tests:
+          - not_null
+      - name: is_terminal_page
+        description: True when the page has no outgoing source-managed page link.
+        data_tests:
+          - not_null
+      - name: is_active
+        description: Whether the page is active in the source system.
+      - name: published_at
+        description: Timezone-aware timestamp when the page was first published.
+      - name: updated_at
+        description: Timezone-aware timestamp when the page was most recently updated.
+
+  - name: fct_website_page_navigation
+    description: Website navigation graph with one row per source-managed from_page-to_page relationship. It includes actual session-ordered transition counts and observed transition probabilities for downstream heatmaps; it does not propagate raw transition_probability.
+    columns:
+      - name: from_page
+        description: Identifier of the page where the navigation relationship starts.
+        data_tests:
+          - not_null
+      - name: to_page
+        description: Identifier of the page where the navigation relationship ends.
+        data_tests:
+          - not_null
+      - name: from_page_name
+        description: Readable name of the origin page.
+        data_tests:
+          - not_null
+      - name: to_page_name
+        description: Readable name of the destination page.
+        data_tests:
+          - not_null
+      - name: transition_count
+        description: Count of actual session-ordered transitions observed for the source-managed page-link edge.
+        data_tests:
+          - not_null
+      - name: from_page_transition_count
+        description: Count of actual observed transitions from the origin page across source-managed outgoing edges.
+        data_tests:
+          - not_null
+      - name: observed_transition_probability
+        description: Empirical share of observed transitions from the origin page that followed this source-managed edge. This is calculated from raw.events and is not the raw transition_probability.
+        data_tests:
+          - not_null
+
+  - name: fct_website_daily_conversion_funnel
+    description: Daily website conversion funnel with one row per date_day. It includes reach counts for all current source-graph pages and an ordered cart-to-checkout-to-order-confirmation conversion path, counted from actual session-ordered events rather than modeled navigation probabilities.
+    columns:
+      - name: date_day
+        description: Calendar date for the session-started conversion funnel. Mart grain is one row per date_day.
+        data_tests:
+          - not_null
+          - unique
+      - name: home_session_count
+        description: Count of sessions that reached the home page on the date.
+        data_tests:
+          - not_null
+      - name: blog_session_count
+        description: Count of sessions that reached the blog page on the date.
+        data_tests:
+          - not_null
+      - name: products_session_count
+        description: Count of sessions that reached the products page on the date.
+        data_tests:
+          - not_null
+      - name: cart_session_count
+        description: Count of sessions that reached the cart page on the date.
+        data_tests:
+          - not_null
+      - name: checkout_session_count
+        description: Count of sessions that reached checkout after cart when the cart-to-checkout page link is present in the source graph.
+        data_tests:
+          - not_null
+      - name: order_confirmation_session_count
+        description: Count of sessions that reached order confirmation after checkout and cart when both required page links are present in the source graph.
+        data_tests:
+          - not_null
+
   - name: dim_visitors
     description: Dimension table with one row per generated website visitor.
     columns:
