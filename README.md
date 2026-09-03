@@ -144,6 +144,7 @@ Initial marts:
 fct_events   -> one row per website event
 fct_sessions -> one row per source-provided visitor session
 dim_visitors -> one row per generated visitor
+fct_website_daily_metrics -> one row per session-started calendar day
 ```
 
 `session_id` is provided by the source table, so this project does not perform
