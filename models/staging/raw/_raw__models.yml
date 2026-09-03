@@ -124,6 +124,43 @@ models:
       - name: actual_saturated_demand
         description: Synthetic-only diagnostic truth field for generated saturated demand, expected to be between 0 and 1. Real campaign warehouses would infer this value; use only in staging, QA, validation, or clearly named diagnostic models.
 
+  - name: stg_website
+    description: Website page dimension staging model with one row per distinct page in the source-managed page-link graph. page_path and page_name are sourced from the graph node identifier; CMS page metadata is null until a page-inventory source is available. Website traffic flow is calculated separately from raw.events using session-ordered events.
+    columns:
+      - name: page_id
+        description: Primary key for the website page. Model grain is one row per website page.
+        data_tests:
+          - not_null
+          - unique
+      - name: page_path
+        description: Canonical non-empty path for the website page.
+        data_tests:
+          - not_null
+      - name: page_name
+        description: Page identifier from the source-managed graph, used as the page name until CMS metadata is available.
+      - name: page_type
+        description: Website page classification, null because the current graph source does not provide page inventory metadata.
+      - name: parent_page_id
+        description: Identifier of the parent website page, null because the current graph source does not provide page hierarchy metadata.
+      - name: is_active
+        description: Whether the page is active in the source system.
+      - name: published_at
+        description: Timezone-aware timestamp when the page was first published.
+      - name: updated_at
+        description: Timezone-aware timestamp when the page was most recently updated.
+
+  - name: stg_website_page_links
+    description: Clean source-managed website page links with one row per distinct from_page and to_page pair. transition_probability is intentionally excluded; website traffic flow is calculated separately from raw.events using session-ordered events.
+    columns:
+      - name: from_page
+        description: Origin page in the source-managed page link.
+        data_tests:
+          - not_null
+      - name: to_page
+        description: Destination page in the source-managed page link.
+        data_tests:
+          - not_null
+
 unit_tests:
   - name: stg_raw__events_extracts_profile_properties
     model: stg_raw__events
