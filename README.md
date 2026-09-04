@@ -75,6 +75,9 @@ DBT_HOST=<postgres host>
 DBT_PORT=5432
 DBT_USER=dbt_editor
 DBT_PASSWORD=<secret>
+DBT_DBNAME=synthetic_website_data
+DBT_SCHEMA=dbt
+DBT_THREADS=4
 ```
 
 `profiles.example.yml` uses these variables. Copy it to your local dbt profiles
@@ -99,6 +102,31 @@ uv run dbt debug --profiles-dir .
 uv run dbt parse --profiles-dir .
 uv run dbt build --profiles-dir .
 ```
+
+## Docker
+
+Build the dbt image with the project and its locked dependencies:
+
+```bash
+docker build -t synthetic-website-dbt .
+```
+
+Supply Postgres configuration only when the container runs. When connecting to
+the host-local database, use host networking:
+
+```bash
+docker run --rm --network host --env-file .env synthetic-website-dbt dbt build
+```
+
+Override the dbt command when needed:
+
+```bash
+docker run --rm --env-file .env synthetic-website-dbt dbt debug
+```
+
+`DBT_HOST`, `DBT_PORT`, `DBT_USER`, `DBT_PASSWORD`, `DBT_DBNAME`,
+`DBT_SCHEMA`, and `DBT_THREADS` are read at runtime. `.env` and local
+`profiles.yml` files are excluded from the Docker build context.
 
 ## Architecture
 
