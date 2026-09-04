@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.4.0 (2026-09-04)
+
+### Features
+
+- Containerize dbt project
+  ([`f1b9a43`](https://github.com/SpencerRWood/synthetic-website-dbt/commit/f1b9a4320d538c809f3d064d52fc9a86439a040a))
+
+
 ## v0.3.0 (2026-09-03)
 
 ### Features
