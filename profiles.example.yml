@@ -7,6 +7,6 @@ synthetic_website_dbt:
       port: "{{ env_var('DBT_PORT', '5432') | int }}"
       user: "{{ env_var('DBT_USER') }}"
       password: "{{ env_var('DBT_PASSWORD') }}"
-      dbname: synthetic_website_data
-      schema: dbt
-      threads: 4
+      dbname: "{{ env_var('DBT_DBNAME', 'synthetic_website_data') }}"
+      schema: "{{ env_var('DBT_SCHEMA', 'dbt') }}"
+      threads: "{{ env_var('DBT_THREADS', '4') | int }}"
