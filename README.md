@@ -128,6 +128,14 @@ docker run --rm --env-file .env synthetic-website-dbt dbt debug
 `DBT_SCHEMA`, and `DBT_THREADS` are read at runtime. `.env` and local
 `profiles.yml` files are excluded from the Docker build context.
 
+## Dagster PoC boundary
+
+This repository remains directly runnable with `dbt build`. The sole PoC
+Dagster code location lives in the sibling `synthetic-website-data` repository,
+where its `Full Synthetic Rebuild` job invokes this existing command after the
+generator has loaded the raw PostgreSQL tables. This project intentionally does
+not expose a second Dagster code location or dbt asset model.
+
 ## Architecture
 
 ```text
