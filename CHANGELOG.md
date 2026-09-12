@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.5.0 (2026-09-12)
+
+### Features
+
+- Support Dagster rebuild integration
+  ([`17dfd90`](https://github.com/SpencerRWood/synthetic-website-dbt/commit/17dfd90267ec4a541698e9edd7ea17e8c7cc2daf))
+
+
 ## v0.4.0 (2026-09-04)
 
 ### Features
