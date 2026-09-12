@@ -3,7 +3,7 @@ name = "synthetic-website-dbt"
 version = "0.4.0"
 description = "dbt transformations and analytics marts for the synthetic website dataset."
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.13,<3.14"
 authors = [
   { name = "Spencer Wood" },
 ]
@@ -11,7 +11,7 @@ classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
   "dbt-postgres>=1.11.0",
@@ -32,7 +32,7 @@ package = false
 
 [tool.ruff]
 line-length = 88
-target-version = "py314"
+target-version = "py313"
 src = ["."]
 
 [tool.ruff.lint]
