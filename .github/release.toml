@@ -1,0 +1,13 @@
+version = 1
+
+[python]
+version = "3.13"
+
+[validation]
+checks = ["dbt-deps", "dbt-parse", "pre-commit"]
+
+[dbt]
+profiles_example = "profiles.example.yml"
+
+[release]
+semantic_release = true
