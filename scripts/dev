@@ -26,6 +26,7 @@ fi
 
 export DBT_HOST=127.0.0.1 DBT_PORT="$port" DBT_USER=dbt_editor
 export INFISICAL_DISABLE_UPDATE_CHECK=true
+unset DBT_PASSWORD
 if (( $# == 0 )); then
   set -- dbt debug --profiles-dir .
 fi
