@@ -85,6 +85,22 @@ location or to an ignored repository-local `profiles.yml`.
 
 ## Initial Setup
 
+For local development, authenticate to Infisical and run the launcher. It reads
+`DBT_PASSWORD` from `Infrastructure Dev/dev:/synthetic-website-dbt` and opens a
+temporary SSH tunnel to the development PostgreSQL server. The tunnel closes
+when the command exits. No local `.env` is required.
+
+```bash
+infisical login --domain=https://dev-infisical.woodhost.cloud/api --method=user --interactive
+scripts/dev
+scripts/dev dbt parse --profiles-dir .
+```
+
+The launcher requires the `swood-server` SSH alias in your local SSH config.
+Set `DBT_TUNNEL_PORT` if port 25434 is already in use.
+
+For a directly reachable warehouse, the lower-level dbt commands are:
+
 ```bash
 uv sync
 cp profiles.example.yml ~/.dbt/profiles.yml
