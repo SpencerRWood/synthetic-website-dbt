@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v0.6.0 (2026-09-26)
+
+### Bug Fixes
+
+- **dev**: Ignore inherited dbt password
+  ([`ca6efa4`](https://github.com/SpencerRWood/synthetic-website-dbt/commit/ca6efa4f9daa816e11052838c020ff01a6dc5a5e))
+
+### Features
+
+- **dev**: Run dbt through Infisical and SSH tunnel
+  ([`4b3c01d`](https://github.com/SpencerRWood/synthetic-website-dbt/commit/4b3c01de9fe180a31052d4099e60bbea9254b63d))
+
+
 ## v0.5.0 (2026-09-12)
 
 ### Features
