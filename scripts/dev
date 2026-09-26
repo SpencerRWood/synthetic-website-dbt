@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+port="${DBT_TUNNEL_PORT:-25434}"
+ssh -o BatchMode=yes -o ExitOnForwardFailure=yes \
+  -L "127.0.0.1:${port}:192.168.1.21:25433" -N swood-server &
+tunnel_pid=$!
+trap 'kill "$tunnel_pid" 2>/dev/null || true; wait "$tunnel_pid" 2>/dev/null || true' EXIT
+
+for _ in {1..30}; do
+  if ! kill -0 "$tunnel_pid" 2>/dev/null; then
+    echo "Database tunnel exited before becoming ready" >&2
+    exit 1
+  fi
+  if nc -z 127.0.0.1 "$port" 2>/dev/null; then
+    break
+  fi
+  sleep 0.1
+done
+if ! nc -z 127.0.0.1 "$port" 2>/dev/null; then
+  echo "Database tunnel did not become ready" >&2
+  exit 1
+fi
+
+export DBT_HOST=127.0.0.1 DBT_PORT="$port" DBT_USER=dbt_editor
+export INFISICAL_DISABLE_UPDATE_CHECK=true
+if (( $# == 0 )); then
+  set -- dbt debug --profiles-dir .
+fi
+infisical run \
+  --domain=https://dev-infisical.woodhost.cloud/api \
+  --projectId=7ea10433-2eeb-4c57-95a9-b793dd40c7a4 \
+  --env=dev \
+  --path=/synthetic-website-dbt \
+  -- uv run "$@"
