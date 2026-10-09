@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.6.1 (2026-10-09)
+
+### Bug Fixes
+
+- Include architecture metadata in released artifacts
+  ([`a1ca8db`](https://github.com/SpencerRWood/synthetic-website-dbt/commit/a1ca8db0c26846d6aee5f3709a7c706ecf058343))
+
+
 ## v0.6.0 (2026-09-26)
 
 ### Bug Fixes
